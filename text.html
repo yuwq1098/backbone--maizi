@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>backbone.js学习--麦子视频</title>
+	<meta name="author" content="高级前端工程师--喻文强">
+
+	<link type="text/css" rel="stylesheet" href="css/normalize.css"/>
+	<link type="text/css" rel="stylesheet" href="css/main.css"/>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+</head>
+
+<body>
+   <input type="text" id="op">
+   <input type="text" id="Geek">
+   <a>10086</a>
+</body>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/backbone.js"></script>
+
+<script type="text/javascript">
+/*
+    输入框光标处插入文本
+ */
+(function($) {
+    $.fn.extend({
+        insertAtCaret: function(myValue) {
+            var $t = $(this)[0];
+            console.log($t.selectionStart || $t.selectionStart == '0');
+            if (document.selection) {
+                this.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+                this.focus();
+            } else if ($t.selectionStart || $t.selectionStart == '0') {
+                var startPos  = $t.selectionStart;
+                var endPos    = $t.selectionEnd;
+                var scrollTop = $t.scrollTop;
+                $t.value      = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+                this.focus();
+                $t.selectionStart = startPos + myValue.length;
+                $t.selectionEnd   = startPos + myValue.length;
+                $t.scrollTop      = scrollTop;
+            } else {
+                this.value += myValue;
+                this.focus();
+            }
+        }
+    })
+})(jQuery);
+$('#op').insertAtCaret("年少轻狂");
+$('#Geek').insertAtCaret("嘻嘻哈哈");
+
+;(function($) {
+
+	$.fn.geek = function(options) {
+	    var Haorooms = function(el, opt) {
+			this.$element = el,
+			this.defaults = {
+			    'color': 'red',
+			    'fontSize': '12px',
+			    'textDecoration':'none',
+			    'lineHeight':'5',
+			    'backgroundColor':'#333',
+			},
+			this.options = $.extend({
+
+			}, this.defaults, opt);
+		}
+		
+		//定义haorooms的方法
+		Haorooms.prototype = {
+			changecss: function() {
+			    return this.$element.css({
+			        'color': this.options.color,
+			        'fontSize': this.options.fontSize,
+			        'textDecoration': this.options.textDecoration,
+			        'lineHeight': this.options.lineHeight,
+			        'backgroundColor': this.options.backgroundColor,
+			    });
+			},
+			yuwq: function(){
+                console.log("你丫的想拖打");
+                return;
+			},
+	    }
+
+	    //创建haorooms的实体
+	    var haorooms= new Haorooms(this, options);
+	    //调用其方法
+	    haorooms.changecss();
+	    haorooms.yuwq();
+	    return;
+	}
+})(jQuery);
+
+$(function() {
+  $('a').geek({
+    'color': '#e45',
+    'fontSize': '20px'
+  });
+})
+
+
+</script>
+
+</html>
