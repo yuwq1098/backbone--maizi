@@ -10,73 +10,109 @@ $(function(){
     	desription: "desription"
     });
 
-    var toDoItem2 = new ToDoItem();
+    var toDoItem2 = new ToDoItem({
+        title: "yuwenqiang111",
+        desription: "desription"
+    });
 
-    toDoItem.on("change",function(){
-        console.log("toDoItem is change!");
-        // 先把attribute里的object数据用toJSON方法转一下格式，然后获取其中的title值
-        console.log("new title: "+this.toJSON().title);
-        // 回调，得到新的自身对象
-        console.log(this);
-        // 如果这个model的title属性发生变化
-        if(this.hasChanged("title")){
-            console.log("this title is changed!");
-        }else{
-            // 第二次重复改变相同值，changed事件不触发
-            console.log("this title is not changed!");
+    var toDoItem3 = new ToDoItem({
+        title: "yuwenqiang222",
+        desription: "desription"
+    });
+
+    var ToDoItemView = Backbone.View.extend({
+        targetName: "div",
+        className: "todo-item",
+        // 事件声明
+        events: {
+            "mouseover": "hoverFun",
+            "click em" : "changeCss",
+            "dblclick span"  : "dbclickFun",
+            "click .remove"  : "removeFun",
+        },
+        // 构造函数，backbone在实例化操作时，自动调用该方法
+        initialize: function(){
+            // this.listenTo(this.model,"change",this.render);
+            // 侦听model被销毁的事件， this(view)移除
+            this.listenTo(this.model,"destroy",this.remove);
+            this.render();
+        },
+        // 视图渲染
+        render: function(){
+            console.log("this model is changed!");
+            console.log(this.model.changed);
+            var oJSON = this.model.toJSON();
+            console.log(oJSON);
+            this.$el.html("<h2>"+oJSON.title+"</h2><p>"+oJSON.desription+"<i class='remove'>删除</i></p>");
+            return this;
+        },
+        // 悬浮触发
+        hoverFun: function(e){
+            console.log("hover");
+        },
+        // 改变样式
+        changeCss: function(e){
+            // 把backbone的DOM转换成 $DOM
+            console.log($(e.target).html());
+            // 侦听委托的对象改变样式
+            $(e.delegateTarget).css("color","#f83");
+            // 被触发的对象改变样式
+            $(e.target).css("color","red");
+
+        },
+        // 双击事件
+        dbclickFun: function(e){
+            console.log("双击老子干嘛？有病？");
+        },
+        // 删除事件
+        removeFun: function(e){
+            // 销毁一个model，
+            this.model.destroy();
+        },
+
+    });
+
+    var toDoItemView = new ToDoItemView({
+        
+        el: "#p1",
+        model: toDoItem,
+        /*不调用*/
+        render: function () {
+            console.log("新的render方法，老的死开，草，没有initialize构造函数，老子无效");
         }
     });
     
-    //只监听desription是否改变
-    // toDoItem.on("change:desription",function(){
-    //     console.log("this desription is changed!");   
+    // 如果继承的是同样的ToDoItemView，侦听的也是同样的model，那么model改变时，两个view同时改变
+    var toDoItemView2 = new ToDoItemView({
+        
+        el: "#p2",
+        model: toDoItem,
+        // 覆盖了粑粑的initialize,有initialize构造函数，老子也无效
+        initialize: function(){
+            this.listenTo(toDoItem,"change",this.render);
+        },
+        render: function () {
+            console.log("新的render方法，老的死开，草，有initialize构造函数，老子也无效");
+        }
+    });
+
+    var toDoItemView3 = new ToDoItemView({
+        model: toDoItem2,
+    });
+
+    var toDoItemView4 = new ToDoItemView({
+        model: toDoItem3,
+    });
+    
+    // toDoItemView.listenTo(toDoItem,"change",function(){
+    //     console.log("this model is changed!");
     // });
     
-    // 取消侦听
-    // toDoItem.off("change");
-    
-    // 只执行一次on绑定事件，然后自动解绑
-    toDoItem.once("change:desription",function(){
-        console.log("this desription is changed!");   
-    });
-    
-    // 在on/once之后写off,  事件触发之前就取消侦听，所以上一段代码无效
-    // toDoItem.off("change:desription");
+    toDoItem.set({"title":"Geek.Yu","desription":"a good development!"});
 
-    // silent只是backbone model内置的一个option, silent:true 不触发事件回调
-    toDoItem.set({"title":"古力娜扎","desription":"没啥发展！"},{silent:true});
-    
-    // 重复改变相同值，看是否触发changed ，changed事件不触发， silent：true时，相同值仍不触发
-    toDoItem.set({"title":"古力娜扎","desription":"没啥发展！"});
+    toDoItemView3.render().$el.appendTo($("body"));
 
-    // 新变更时 触发事件回调
-    toDoItem.set({"title":"古力娜扎","desription":"没啥发展11！"});
-    
-    // model2侦听model，model发生指定变化时，model2可以进行一些操作，比如重新渲染视图，，一般view侦听model,  view侦听collection
-    toDoItem2.listenTo(toDoItem,"change:title",function(){
-        console.log("new listenTo:  ");
-        console.log(this);
-    });
-
-    // 新变更时 触发事件回调
-    toDoItem.set({"title":"古力娜扎16","desription":"没啥发展2222！"});
-
-    // trigger事件，无需任何条件，直接触发事件
-    toDoItem.trigger('change');
-    
-    // 绑定在toDoItem上的自定义事件
-    toDoItem.on("Geek.Yu",function(){
-        console.log("This is a custom event!");
-    });
-    
-    // trigger事件，可以触发自定义事件
-    toDoItem.trigger('Geek.Yu');
-
-    //其他事件   销毁destory、服务器同步sync、校验invalid
-
-    
-
-
+    toDoItemView4.render().$el.appendTo($("body"));
 
 
 });
