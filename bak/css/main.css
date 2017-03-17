@@ -1,0 +1,9 @@
+ul,h1,h2,h3,h4,h5,h6,p{ margin: 0; font-weight: 400; line-height: 2; }
+ul,li{ list-style: none; padding: 0; }
+em{ font-style: normal;}
+a{ text-decoration: none;}
+a,input{ outline: none; color: #333;}
+a:focus{ outline: none; }
+
+html{ font-size: 20px; }
+body{ background-color: #fff; font-weight: 400;  font: 14px/2 sans-serif;  font-family: Arial,"Lucida Grande","Microsoft Yahei","Hiragino Sans GB","Hiragino Sans GB W3",SimSun,"PingFang SC",STHeiti; }
